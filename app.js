@@ -74,26 +74,58 @@ const menu = [
   ];
 
 const sectionCenter = document.querySelector('.section-center'); //Seleccionando el contenedor de los items individuales
+const filterButtons = document.querySelectorAll('.filter-btn'); //Retorna una nodeList con todos los botones
 
+/* Load Items */
 window.addEventListener("DOMContentLoaded", () =>{ // Agregamos un listener a la ventana, el evento que lo activa es cuando carga la pag
-    
-    let displayMenu = menu.map(function(item){ // Hacemos una copia de nuestro array de objetos con map para convertirlo en cadenas de texto (strings) que representan html
-        
-        return `<article class="menu-item">
-                <img src=${item.img} class="photo"
-                alt=${item.title}>
-                <div class="item-info">
-                    <header> 
-                        <h4>${item.title}</h4>
-                        <h4 class="price">$${item.price}</h4>
-                    </header>
-                   <p class= "item-text">${item.desc}</p>
-                </div>
-            </article>`;
-        
-    });
-
-    displayMenu = displayMenu.join(""); // Convierto el array de strings en un solo string largo y le indico que todo lo una sin comas ni espacios para que se respete la sintaxis de html
-    sectionCenter.innerHTML = displayMenu; //Con la sintaxis correcta y todo en un mismo string gigante lo inserto dentro del contenedor sectionCenter con innerHTML
+    displayMenuItems(menu);
 });
 
+
+/* Filter Items */
+
+filterButtons.forEach((button)=>{ //Recorremos toda la nodeList
+  button.addEventListener('click', (e) =>{ //Ponemos a escuchar todos los botones
+    let category = e.currentTarget.dataset.id; //Obtengo el id del boton que se esta presionando
+    console.log(category) //imprimo el id del boton que vendria siendo la categoria
+    filterContent(category);
+  });
+});
+
+function filterContent (category){//Recibe la categoria identificada por el listener del boton
+  console.log(`recibi la categoria ${category}`)
+  
+  if (category==="all") {
+    displayMenuItems(menu);
+  } else {
+    const menuFiltrado = menu.filter((actual)=>{ //se crea una copia de menu llamada menuFiltrado y filter recorre todos los elementos
+      return actual.category === category; //Retorna solo el elemento actual que tenga la misma categoria que la recibida
+    })
+    displayMenuItems(menuFiltrado); //Imprime el menu filtrado
+    console.log(menuFiltrado);
+  }
+ 
+}
+
+
+
+function displayMenuItems(menuItems){
+  let displayMenu = menuItems.map(function(item){ // Hacemos una copia de nuestro array de objetos con map para convertirlo en cadenas de texto (strings) que representan html
+    /* Usamos template literals para incrustar el string en el html */
+    return `<article class="menu-item">
+            <img src=${item.img} class="photo"
+            alt=${item.title}>
+            <div class="item-info">
+                <header> 
+                    <h4>${item.title}</h4>
+                    <h4 class="price">$${item.price}</h4>
+                </header>
+               <p class= "item-text">${item.desc}</p>
+            </div>
+        </article>`;
+    
+});
+
+displayMenu = displayMenu.join(""); // Convierto el array de strings en un solo string largo y le indico que todo lo una sin comas ni espacios para que se respete la sintaxis de html
+sectionCenter.innerHTML = displayMenu; //Con la sintaxis correcta y todo en un mismo string gigante lo inserto dentro del contenedor sectionCenter con innerHTML
+}
